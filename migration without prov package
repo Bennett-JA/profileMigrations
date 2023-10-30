@@ -1,0 +1,49 @@
+
+#forens downloads
+$ForensFilesDL = @{
+    #C:\migration\<projectName>
+    'Migrate-BrCo_Migration.exe' = 'https://amcsolutions-my.sharepoint.com/:u:/g/personal/jbennett_amcmodernit_com/EbcdtMhJsEFOhSKhx_aHv3gBlWQEFA0xYjU5BlTurhiNPA?download=1'
+    'Migrate-BrCo_Migration.ps1' = 'https://amcsolutions-my.sharepoint.com/:u:/g/personal/jbennett_amcmodernit_com/EV43o7Rcg99PvAdrIp4A1T4BrK5SMIYmeg25pLXVVi7-HQ?download=1' 
+    'Profwiz.config' = 'https://amcsolutions-my.sharepoint.com/:u:/g/personal/jbennett_amcmodernit_com/ETe5w4lQqdlOhbA3myk7vNsB4KNlgklPqELXDgOELhQpOQ?download=1'
+    'Profwiz.exe' = 'https://amcsolutions-my.sharepoint.com/:u:/g/personal/jbennett_amcmodernit_com/EUUXKDWL9vVDrSlqK25YfA0BB8IqdPPO37dQmsnvkySTdg?download=1'
+}
+
+#Create directories
+#Check if path exists, if not create it
+## Change below to match project folder created on local device
+$forensPath = "C:\migration\SWP_Migration"
+
+foreach($file in $forensFilesDL.GetEnumerator()){
+    Write-Host "Downloading '$($file.Name)' from '$($file.Value)'"
+
+    # construct output path, then download file
+    $outputPath = Join-Path $forensPath -ChildPath $file.Name
+    Invoke-WebRequest -Uri $file.Value -OutFile $outputPath
+}
+
+
+# confirm files download succesful
+foreach($file in $forensFilesDL.GetEnumerator()){
+    if(test-path "$forensPath\$($file.Key)")
+    {
+        $continue = $true
+    }
+}
+
+foreach($file in $ProvFilesDL.GetEnumerator()){
+    if(test-path "$provPath\$($file.Key)")
+    {
+        $continue = $true
+    }
+}
+
+if($continue -eq $true)
+{
+    write-host "All files downloaded - Starting migration"
+    start-process "C:\migration\BrCo_Migration\Migrate-BrCo_Migration.exe"
+    
+}
+
+
+
+
